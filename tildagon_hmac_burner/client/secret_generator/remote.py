@@ -16,4 +16,4 @@ class RemoteSecretGenerator(SecretGenerator):
             headers={"Authorization": f"Bearer {self.api_key}"}
         )
         response.raise_for_status()
-        return response.json()["hmac_key"]
+        return bytes.fromhex(response.json()["hmac_key"])

@@ -54,4 +54,4 @@ def generate_badge_secret():
     except ValueError as e:
         return jsonify({'message': str(e)}), 400
     
-    return jsonify({'hmac_key': hmac_key}), 200
+    return jsonify({'hmac_key': hmac_key.hex()}), 200

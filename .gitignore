@@ -1,4 +1,4 @@
-*.egg_info/
+*.egg-info/
 __pycache__/
 .venv/
 tokens.db

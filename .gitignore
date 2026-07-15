@@ -1,0 +1,6 @@
+*.egg_info/
+__pycache__/
+.venv/
+tokens.db
+cert.pem
+key.pem

@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tildagon-hmac-burner"
+version = "0.1.0"
+description = "Tildagon Badge HMAC Burner server+client"
+authors = [{name = "Skyler Mansfield"}]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[project.optional-dependencies]
+client = ["esptool", "requests"]
+client-local = ["flask", "tildagon-hmac-burner[client]"]
+client-remote = ["requests", "tildagon-hmac-burner[client]"]
+server = ["flask"]
+all = ["tildagon-hmac-burner[client-local]", "tildagon-hmac-burner[client-remote]", "tildagon-hmac-burner[server]"]

@@ -46,6 +46,7 @@ def main(args: list[str]):
     success_iters = 0
 
     previous_ports = set()
+    success_ports = set()
 
     while success_iters < max_loops:
         loop_iters += 1
@@ -54,11 +55,13 @@ def main(args: list[str]):
 
         added_ports = ports - previous_ports
         removed_ports = previous_ports - ports
+        success_ports = success_ports - removed_ports # Re-allow burning on ports that were removed and re-added
         if added_ports:
             print(f"New device(s) detected: \n - {'\n - '.join(added_ports)}")
         if removed_ports:
             print(f"Device(s) removed: \n - {'\n - '.join(removed_ports)}")
         previous_ports = ports
+        ports = ports - success_ports # Filter out ports that have already been successfully burned
         
         if parsed_args.port_filter:
             ports = [p for p in ports if any(f in p for f in parsed_args.port_filter)]
@@ -67,19 +70,21 @@ def main(args: list[str]):
             time.sleep(1)
             print(f"Waiting for device {parsed_args.port or 'auto-detect'}... {LOADING_CHARS[loop_iters % len(LOADING_CHARS)]}", end="\r")
             continue
-        
-        print(f"Connecting to device on port {parsed_args.port or ports[0]}.")
+        port = parsed_args.port or list(ports)[0]
+        print(f"Connecting to device on port {port}.")
         try:
-            esp = ESP(port=parsed_args.port or ports[0])
+            esp = ESP(port=port)
         except:
-            print(f"Failed to connect to device on port {parsed_args.port or ports[0]}. Retrying...")
+            print(f"Failed to connect to device on port {port}. Retrying...")
             time.sleep(1)
             continue
         try:
             secret = secret_generator.generate_combined_secret(esp.read_mac())
             esp.burn_hmac_key(secret, key_to_use=parsed_args.key, do_not_confirm=parsed_args.loop)
             success_iters += 1
-        except:
+            success_ports.add(port)
+        except Exception as e:
             print(f"Failed to burn HMAC key on device. Retrying...")
+            print(f"Error: {e}")
             time.sleep(1)
             continue

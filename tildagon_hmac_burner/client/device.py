@@ -11,7 +11,7 @@ class ESP:
         return mac_str
 
     def burn_hmac_key(self, hmac_key, key_to_use=1, do_not_confirm=False):
-        efuses, operations = espefuse.get_efuses(self.esp, do_not_confirm=do_not_confirm)
+        commands = espefuse.init_commands(esp=self.esp, do_not_confirm=do_not_confirm)
         class Args:
             name_value_pairs = {}
         args = Args()
@@ -19,5 +19,5 @@ class ESP:
         args.name_value_pairs[f"BLOCK_KEY{key_to_use}"] = hmac_key
         args.name_value_pairs[f"RD_DIS"] = (1<<(key_to_use))
         # args.name_value_pairs[f"WR_DIS"] = (1<<(23+key_to_use))
-        print(operations.burn_efuse)
-        operations.burn_efuse(self.esp, efuses, args)
+        commands.burn_efuse(args.name_value_pairs)
+        

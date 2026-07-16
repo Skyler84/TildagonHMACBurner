@@ -10,6 +10,13 @@ from .device import ESP
 
 LOADING_CHARS = ['|', '/', '-', '\\']
 
+def port_matches(port: str, ports: set[str]) -> bool:
+    if port in ports:
+        return True
+    if any([p[-1] == '*' and port.startswith(p[:-1]) for p in ports]):
+        return True
+    return False
+
 def main(args: list[str]):
     parser = argparse.ArgumentParser(description="Burn HMAC key to device")
     parser.add_argument("--key", type=int, default=1, help="Key number to burn (default: 1)")
@@ -65,7 +72,7 @@ def main(args: list[str]):
         ports = ports - success_ports # Filter out ports that have already been successfully burned
 
         if parsed_args.port_filter:
-            ports = [p for p in ports if any(f in p for f in parsed_args.port_filter)]
+            ports = [p for p in ports if port_matches(p, set(parsed_args.port_filter))]
 
         if not ports:
             time.sleep(1)

@@ -53,5 +53,7 @@ def generate_badge_secret():
         hmac_key = generate_hmac_key(MASTER_SECRET, mac_str)
     except ValueError as e:
         return jsonify({'message': str(e)}), 400
+
+    print("Generated badge secret for MAC:", mac_str)
     
     return jsonify({'hmac_key': hmac_key.hex()}), 200

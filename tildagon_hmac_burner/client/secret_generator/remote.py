@@ -13,7 +13,8 @@ class RemoteSecretGenerator(SecretGenerator):
         response = requests.post(
             f"{self.server_url}/api/generate_badge_secret/",
             json={"mac": mac_str},
-            headers={"Authorization": f"Bearer {self.api_key}"}
+            headers={"Authorization": f"Bearer {self.api_key}"},
+            verify=False
         )
         response.raise_for_status()
         return bytes.fromhex(response.json()["hmac_key"])

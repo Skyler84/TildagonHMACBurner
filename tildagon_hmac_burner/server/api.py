@@ -12,30 +12,11 @@ API_TOKEN = os.getenv('API_TOKEN')
 MASTER_SECRET = os.getenv('MASTER_SECRET')
 check_master_secret(MASTER_SECRET)  # Validate the master secret if provided
 
-
 @app.route('/api/status', methods=['GET'])
 @token_required
 def status():
     """Health check endpoint"""
     return jsonify({'status': 'ok', 'message': 'Server is running'}), 200
-
-
-@app.route('/api/data', methods=['POST'])
-@token_required
-def post_data():
-    """Accept POST data"""
-    data = request.get_json()
-    if not data:
-        return jsonify({'message': 'No data provided'}), 400
-    
-    return jsonify({'message': 'Data received', 'data': data}), 201
-
-
-@app.route('/api/data', methods=['GET'])
-@token_required
-def get_data():
-    """Retrieve data"""
-    return jsonify({'message': 'Sample data', 'data': {'id': 1, 'name': 'example'}}), 200
 
 @app.route('/api/generate_badge_secret/', methods=['POST'])
 @token_required

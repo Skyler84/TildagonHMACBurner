@@ -2,5 +2,6 @@
 __pycache__/
 .venv/
 tokens.db
+tildagon_hmac_burner.db
 cert.pem
 key.pem

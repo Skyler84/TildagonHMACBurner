@@ -3,7 +3,7 @@ from flask import Flask, jsonify, request
 from .app import app
 from .api import *
 
-from .auth.token import init_db
+from .db import init_db
 
 # Initialize the token database
 init_db()

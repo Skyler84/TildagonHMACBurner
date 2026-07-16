@@ -91,8 +91,18 @@ def main(args: list[str]):
             esp.burn_hmac_key(secret, key_to_use=parsed_args.key, do_not_confirm=parsed_args.loop)
             success_iters += 1
             success_ports.add(port)
+            print()
+            print()
+            print("Successfully burned HMAC key on device.")
+            print(f"{success_iters} of {max_loops if max_loops != float('inf') else '∞'} successful burn(s).")
+            print()
+            print()
         except Exception as e:
+            print()
+            print()
             print(f"Failed to burn HMAC key on device. Retrying...")
             print(f"Error: {e}")
+            print()
+            print()
             time.sleep(1)
             continue

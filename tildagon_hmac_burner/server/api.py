@@ -1,10 +1,10 @@
 import os
-from flask import jsonify, request
+from flask import jsonify, request, g
 from .app import app
 from .auth.token import token_required
 from ..common.master_secret import check_master_secret
 from ..common.hmac_key import generate_hmac_key
-
+from .db import record_hmac_request
 
 
 # API token from environment variable
@@ -55,5 +55,7 @@ def generate_badge_secret():
         return jsonify({'message': str(e)}), 400
 
     print("Generated badge secret for MAC:", mac_str)
+
+    record_hmac_request(mac_str, g.token_data["id"])
     
     return jsonify({'hmac_key': hmac_key.hex()}), 200

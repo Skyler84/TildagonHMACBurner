@@ -16,11 +16,22 @@ def init_db():
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS generated_hmacs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            mac TEXT NOT NULL,
+            issued_for INTEGER REFERENCES tokens(id) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
     conn.commit()
     conn.close()
 
 def open_conn():
-    return sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def create_token(token, permissions=None):
     """Create a new token in the database."""
@@ -72,3 +83,11 @@ def delete_token(token):
     deleted = c.rowcount > 0
     conn.close()
     return deleted
+
+def record_hmac_request(mac, token_id):
+    """Records that a token requested a HMAC."""
+    conn = open_conn()
+    c = conn.cursor()
+    c.execute('INSERT INTO generated_hmacs (mac, issued_for) values (?, ?)', (mac, token_id))
+    conn.commit()
+    conn.close()

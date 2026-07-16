@@ -56,13 +56,14 @@ def main(args: list[str]):
         added_ports = ports - previous_ports
         removed_ports = previous_ports - ports
         success_ports = success_ports - removed_ports # Re-allow burning on ports that were removed and re-added
+        sep = "\n - "
         if added_ports:
-            print(f"New device(s) detected: \n - {'\n - '.join(added_ports)}")
+            print(f"New device(s) detected: {''.join([sep+p for p in added_ports])}")
         if removed_ports:
-            print(f"Device(s) removed: \n - {'\n - '.join(removed_ports)}")
+            print(f"Device(s) removed: {''.join([sep+p for p in removed_ports])}")
         previous_ports = ports
         ports = ports - success_ports # Filter out ports that have already been successfully burned
-        
+
         if parsed_args.port_filter:
             ports = [p for p in ports if any(f in p for f in parsed_args.port_filter)]
 
